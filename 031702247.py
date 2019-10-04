@@ -3,7 +3,7 @@ import json
 
 a = input()
 i = (a.find(','))
-name = a[0:i]
+name = a[2:i]
 a = a[i+1:]
 number = re.sub("\D", "", a)
 number = number[0:11]
