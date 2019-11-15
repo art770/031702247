@@ -1,0 +1,91 @@
+Skip to content
+ 
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@art770 
+Learn Git and GitHub without any code!
+Using the Hello World guide, you’ll start a branch, write comments, and open a pull request.
+
+Read the guide
+
+ Watch 1
+ Star 0  Fork 0 SugarChl/soft
+ Code  Issues 0  Pull requests 0  Actions  Projects 0  Wiki  Security  Insights
+Branch: master 
+soft/controllers/article.go  / Jump to 
+Find file Copy path
+@SugarChl SugarChl 新增接口
+945ef85 yesterday
+1 contributor
+51 lines (47 sloc)  922 Bytes
+RawBlameHistory
+    
+ You're using jump to definition to discover and navigate code.
+Learn more or give us feedback
+package controllers
+
+import (
+	"fmt"
+	"net/http"
+	. "soft/helper"
+	. "soft/models"
+	"time"
+
+	"github.com/gin-gonic/gin"
+)
+
+func NewArticle(c *gin.Context) {
+	var post_data struct {
+		Token   string
+		Title   string
+		Content string
+	}
+	if err := c.BindJSON(&post_data); err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"ErrorCode": 40002,
+		})
+		return
+	}
+	err, token_data := ParseToken(post_data.Token)
+	if err != 0 {
+		c.JSON(http.StatusOK, gin.H{
+			"ErrorCode": err,
+		})
+		return
+	}
+	user_id := int(token_data["userid"].(float64))
+	new_article := Article{
+		Title:      post_data.Title,
+		Content:    post_data.Content,
+		UserId:     user_id,
+		UploadTime: int(time.Now().Unix()),
+	}
+	if err := new_article.Insert(); err != nil {
+		fmt.Println(err)
+		c.JSON(http.StatusOK, gin.H{
+			"ErrorCode": 40001,
+		})
+	}
+	DB.Find(&new_article)
+	c.JSON(http.StatusOK, gin.H{
+		"ErrorCode": 0,
+		"ArticleId": new_article.Id,
+	})
+}
+© 2019 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Help
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
