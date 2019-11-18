@@ -1,0 +1,97 @@
+Skip to content
+ 
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@art770 
+Learn Git and GitHub without any code!
+Using the Hello World guide, you’ll start a branch, write comments, and open a pull request.
+
+Read the guide
+
+ Watch 1
+ Star 0  Fork 0 SugarChl/soft
+ Code  Issues 0  Pull requests 0  Actions  Projects 0  Wiki  Security  Insights
+Branch: master 
+soft/models/user.go  / Jump to 
+Find file Copy path
+@SugarChl SugarChl 新增接口
+945ef85 4 days ago
+1 contributor
+57 lines (49 sloc)  1.29 KB
+RawBlameHistory
+    
+ You're using jump to definition to discover and navigate code.
+Learn more or give us feedback
+package models
+
+import (
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
+)
+
+type User struct {
+	Id       int    `gorm:"AUTO_INCREMENT;PRIMARY_KEY"`
+	Username string `gorm:"type:char(100)"`
+	Passwd   string `gorm:"type:char(100)"`
+	Sno      string `gorm:"type:char(100)"`
+	Spwd     string `gorm:"type:char(100)"`
+	Sex      string `gorm:"type:char(10)"`
+	Address  string `gorm:"type:char(100)"`
+	Phone    string `gorm:"type:char(20)"`
+	Nickname string `gorm:"type:char(50)"`
+}
+
+type Address struct {
+	Id            int    `gorm:"AUTO_INCREMENT;PRIMARY_KEY"`
+	UserId        int    `gorm:"type:int(5)"`
+	Name          string `gorm:"type:char(100)"`
+	Phone         string `gorm:"type:char(100)"`
+	Major         string `gorm:"type:char(100)"`
+	DetailAddress string `gorm:"type:char(200)"`
+	IsDefault     int    `gorm:"type:int(2)"`
+}
+
+var DB *gorm.DB
+
+func InitDB() (*gorm.DB, error) {
+	db, err := gorm.Open("mysql", "root:ab123@tcp(localhost)/soft?charset=utf8")
+	if err == nil {
+		DB = db
+		db.SingularTable(true)
+
+		db.AutoMigrate(
+			&User{},
+			&Address{},
+			&Article{},
+		)
+		return db, err
+	}
+	return nil, err
+}
+func (u User) Insert() error {
+	return DB.Create(&u).Error
+}
+
+func (u Address) Insert() error {
+	return DB.Create(&u).Error
+}
+func (u Address) Delete() error {
+	return DB.Delete(&u).Error
+}
+© 2019 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Help
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
